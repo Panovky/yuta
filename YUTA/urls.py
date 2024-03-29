@@ -28,5 +28,5 @@ urlpatterns = [
     path('tasks/', include('tasks.urls')),
     path('teams/', include('teams.urls')),
     path('api/', include('api.urls')),
-    path('', RedirectView.as_view(url='main/')),
+    path('', RedirectView.as_view(url='main')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

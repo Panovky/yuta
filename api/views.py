@@ -106,8 +106,8 @@ class ProfileView(APIView):
                 })
 
             user = User.objects.get(id=user_id)
-            user.photo = 'images/default_user_photo.png'
-            user.cropped_photo = 'images/cropped-default_user_photo.png'
+            user.photo = 'images/default-user-photo.png'
+            user.cropped_photo = 'images/cropped-default-user-photo.png'
             user.save()
 
             return JsonResponse({
