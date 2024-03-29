@@ -113,9 +113,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 class User(models.Model):
     id = models.AutoField(primary_key=True)
-    photo = models.ImageField(blank=True, upload_to='images/users_photos', default='images/default_user_photo.png')
+    photo = models.ImageField(blank=True, upload_to='images/users_photos', default='images/default-user-photo.png')
     cropped_photo = models.ImageField(blank=True, upload_to='images/users_photos',
-                                      default='images/cropped-default_user_photo.png')
+                                      default='images/cropped-default-user-photo.png')
     login = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)

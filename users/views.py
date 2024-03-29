@@ -77,8 +77,8 @@ class ProfileView(View):
             return redirect('profile', session_user_id)
 
         if action == 'delete_photo':
-            user.photo = 'images/default_user_photo.png'
-            user.cropped_photo = 'images/cropped-default_user_photo.png'
+            user.photo = 'images/default-user-photo.png'
+            user.cropped_photo = 'images/cropped-default-user-photo.png'
             user.save()
             return redirect('profile', session_user_id)
 
