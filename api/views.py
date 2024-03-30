@@ -132,21 +132,8 @@ class ProfileView(APIView):
                 })
 
             user = User.objects.get(id=user_id)
-            photo_name = f'{user.login}.{extension}'
-            fs = FileSystemStorage(location=f'{MEDIA_ROOT}\\images\\users_photos')
-
-            if fs.exists(name := f'{user.login}.jpg') or fs.exists(name := f'{user.login}.jpeg') or \
-                    fs.exists(name := f'{user.login}.png'):
-                fs.delete(name)
-
-            if fs.exists(name := f'cropped-{user.login}.jpg') or fs.exists(name := f'cropped-{user.login}.jpeg') or \
-                    fs.exists(name := f'cropped-{user.login}.png'):
-                fs.delete(name)
-
-            fs.save(photo_name, photo)
-            fs.save('cropped-' + photo_name, photo)
-            user.photo = f'images/users_photos/{photo_name}'
-            user.cropped_photo = f'images/users_photos/cropped-{photo_name}'
+            user.photo = photo
+            user.cropped_photo = photo
             user.save()
 
             return JsonResponse({
@@ -165,17 +152,17 @@ class ProfileView(APIView):
                 })
 
             user = User.objects.get(id=user_id)
-            photo_url = user.photo.url
-            photo_name = photo_url.replace('/media/images/users_photos/', '')
+            photo_path = user.photo.name
+            cropped_photo_path = f"images/users_photos/cropped-{photo_path.replace('images/users_photos/', '')}"
 
             crop_photo(
-                f'{MEDIA_ROOT}\\images\\users_photos\\{photo_name}',
-                f'{MEDIA_ROOT}\\images\\users_photos\\cropped-{photo_name}',
-                (int(request.data['container_width']), int(request.data['container_height'])),
+                f'{MEDIA_ROOT}/{photo_path}',
+                f'{MEDIA_ROOT}/{cropped_photo_path}',
                 int(request.data['width']),
                 int(request.data['height']),
                 int(request.data['delta_x']),
-                int(request.data['delta_y'])
+                int(request.data['delta_y']),
+                (int(request.data['container_width']), int(request.data['container_height']))
             )
 
             return JsonResponse({
