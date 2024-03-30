@@ -2,6 +2,7 @@ from django.db import models
 from datetime import date
 from django.db.models import QuerySet
 from django.urls import reverse
+from services.file_path_getter import get_file_path
 
 
 class Faculty(models.Model):
@@ -111,10 +112,18 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
     pass
 
 
+def get_photo_path(instance, file_name):
+    return get_file_path(file_name, 'images/users_photos')
+
+
+def get_cropped_photo_path(instance, file_name):
+    return f"images/users_photos/cropped-{instance.photo.name.replace('images/users_photos/', '')}"
+
+
 class User(models.Model):
     id = models.AutoField(primary_key=True)
-    photo = models.ImageField(blank=True, upload_to='images/users_photos', default='images/default-user-photo.png')
-    cropped_photo = models.ImageField(blank=True, upload_to='images/users_photos',
+    photo = models.ImageField(blank=True, upload_to=get_photo_path, default='images/default-user-photo.png')
+    cropped_photo = models.ImageField(blank=True, upload_to=get_cropped_photo_path,
                                       default='images/cropped-default-user-photo.png')
     login = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)

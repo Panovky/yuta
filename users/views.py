@@ -1,5 +1,4 @@
 import datetime
-from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
@@ -44,35 +43,22 @@ class ProfileView(View):
 
         if action == 'update_photo':
             photo = request.FILES['photo']
-            photo_name = f'{user.login}.{photo.name.split(".")[-1]}'
-            fs = FileSystemStorage(location=f'{MEDIA_ROOT}\\images\\users_photos')
-
-            if fs.exists(name := f'{user.login}.jpg') or fs.exists(name := f'{user.login}.jpeg') or \
-                    fs.exists(name := f'{user.login}.png'):
-                fs.delete(name)
-
-            if fs.exists(name := f'cropped-{user.login}.jpg') or fs.exists(name := f'cropped-{user.login}.jpeg') or \
-                    fs.exists(name := f'cropped-{user.login}.png'):
-                fs.delete(name)
-
-            fs.save(photo_name, photo)
-            fs.save('cropped-' + photo_name, photo)
-            user.photo = f'images/users_photos/{photo_name}'
-            user.cropped_photo = f'images/users_photos/cropped-{photo_name}'
+            user.photo = photo
+            user.cropped_photo = photo
             user.save()
             return JsonResponse({'photo_url': user.photo.url})
 
         if action == 'update_miniature':
-            photo_url = user.photo.url
-            photo_name = photo_url.replace('/media/images/users_photos/', '')
+            photo_path = user.photo.name
+            cropped_photo_path = f"images/users_photos/cropped-{photo_path.replace('images/users_photos/', '')}"
             crop_photo(
-                f'{MEDIA_ROOT}\\images\\users_photos\\{photo_name}',
-                f'{MEDIA_ROOT}\\images\\users_photos\\cropped-{photo_name}',
-                (int(request.POST['container_width']), int(request.POST['container_height'])),
+                f'{MEDIA_ROOT}/{photo_path}',
+                f'{MEDIA_ROOT}/{cropped_photo_path}',
                 int(request.POST['width']),
                 int(request.POST['height']),
                 int(request.POST['delta_x']),
-                int(request.POST['delta_y'])
+                int(request.POST['delta_y']),
+                (int(request.POST['container_width']), int(request.POST['container_height']))
             )
             return redirect('profile', session_user_id)
 
