@@ -1,7 +1,6 @@
 import datetime
 import json
 import re
-from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from services.photo_cropper import crop_photo
@@ -11,6 +10,7 @@ from services.utils import authorize_user, edit_user_data, update_user_data, get
 from projects.models import Project
 from teams.models import Team
 from users.models import User
+from users.serializers import UserSerializer
 
 
 class AuthorizationView(APIView):
@@ -63,32 +63,10 @@ class ProfileView(APIView):
                 })
 
             user = User.objects.get(id=user_id)
-
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'user':
-                    {
-                        'login': user.login,
-                        'photo_url': user.photo.url,
-                        'cropped_photo_url': user.cropped_photo.url,
-                        'last_name': user.last_name,
-                        'first_name': user.first_name,
-                        'patronymic': user.patronymic,
-                        'age': user.age,
-                        'biography': user.biography,
-                        'phone_number': user.phone_number,
-                        'e_mail': user.e_mail,
-                        'vk': user.vk,
-                        'faculty': user.faculty.name,
-                        'direction': f'{user.direction.code}-{user.direction.name}',
-                        'group': user.group.name,
-                        'all_projects_count': user.all_projects_count,
-                        'done_projects_count': user.done_projects_count,
-                        'all_tasks_count': user.done_tasks_count,
-                        'done_tasks_count': user.done_tasks_count,
-                        'teams_count': user.teams_count,
-                    }
+                'user': UserSerializer(user).data
             })
 
         return JsonResponse({

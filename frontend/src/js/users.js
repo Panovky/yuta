@@ -48,6 +48,7 @@ deleteFotoBtn.addEventListener('click', () => {
     document.querySelector('#btn-choice-miniature').disabled = true;
     document.querySelector('#inputImg').value = '';
     document.querySelector('.input-file-list').style.display = 'none';
+    document.querySelector('#output').src = '';
 });
 
 document.querySelector('#inputImg').addEventListener('change', (event) => {

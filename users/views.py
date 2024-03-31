@@ -6,6 +6,7 @@ from services.photo_cropper import crop_photo
 from YUTA.settings import MEDIA_ROOT
 from services.utils import edit_user_data, update_user_data
 from users.models import User
+from users.serializers import UserSerializer
 
 
 class ProfileView(View):
@@ -14,19 +15,16 @@ class ProfileView(View):
             return redirect('main')
         session_user_id = request.session['user_id']
         user = User.objects.get(id=url_user_id)
-        is_owner = url_user_id == session_user_id
-        is_default_photo = 'default_user_photo' in user.photo.url
-        timestamp = int(datetime.datetime.now().timestamp())
 
         return render(
             request,
             'profile.html',
             context={
-                'user': user,
-                'is_owner': is_owner,
-                'is_default_photo': is_default_photo,
-                'timestamp': timestamp,
-                'menu_user_id': session_user_id
+                **UserSerializer(user).data,
+                'menu_user_id': session_user_id,
+                'is_owner': url_user_id == session_user_id,
+                'is_default_photo': 'default-user-photo' in user.photo.url,
+                'timestamp': int(datetime.datetime.now().timestamp()),
             }
         )
 
@@ -83,20 +81,17 @@ class ProfileView(View):
 
             if not update_user_data(user, password):
                 session_user_id = request.session['user_id']
-                is_owner = url_user_id == session_user_id
-                is_default_photo = 'default_user_photo' in user.photo.url
-                timestamp = int(datetime.datetime.now().timestamp())
 
                 return render(
                     request,
                     'profile.html',
                     context={
-                        'user': user,
-                        'is_owner': is_owner,
-                        'is_default_photo': is_default_photo,
+                        **UserSerializer(user).data,
+                        'menu_user_id': session_user_id,
+                        'is_owner': url_user_id == session_user_id,
+                        'is_default_photo': 'default-user-photo' in user.photo.url,
+                        'timestamp': int(datetime.datetime.now().timestamp()),
                         'message': 'Неправильный пароль.',
-                        'timestamp': timestamp,
-                        'menu_user_id': session_user_id
                     }
                 )
 
