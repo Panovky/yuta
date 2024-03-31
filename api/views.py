@@ -497,102 +497,101 @@ class TeamsView(APIView):
             'error': 'invalid request'
         })
 
-
-def post(self, request):
-    if 'leader_id' in request.data and 'team_name' in request.data and 'members_id' in request.data and \
-            len(request.data) == 3:
-        leader_id = request.data['leader_id']
-        if not User.objects.filter(id=leader_id).exists():
-            return JsonResponse({
-                'status': 'failed',
-                'error': 'invalid leader id'
-            })
-
-        team_name = request.data['team_name'].strip()
-        if not is_team_name_unique(team_name):
-            return JsonResponse({
-                'status': 'failed',
-                'error': 'non-unique team name'
-            })
-
-        members_id = request.data['members_id']
-        for member_id in members_id:
-            if not User.objects.filter(id=member_id).exists():
+    def post(self, request):
+        if 'leader_id' in request.data and 'team_name' in request.data and 'members_id' in request.data and \
+                len(request.data) == 3:
+            leader_id = request.data['leader_id']
+            if not User.objects.filter(id=leader_id).exists():
                 return JsonResponse({
                     'status': 'failed',
-                    'error': 'invalid member id'
+                    'error': 'invalid leader id'
                 })
 
-        team = Team.objects.create(
-            name=team_name,
-            leader=User.objects.get(id=leader_id)
-        )
-
-        for member_id in members_id:
-            member = User.objects.get(id=member_id)
-            team.members.add(member)
-            member.teams.add(team)
-
-        return JsonResponse({
-            'status': 'OK',
-            'error': None
-        })
-
-    if 'team_id' in request.data and 'team_name' in request.data and 'members_id' in request.data and \
-            len(request.data) == 3:
-        team_id = request.data['team_id']
-        if not Team.objects.filter(id=team_id).exists():
-            return JsonResponse({
-                'status': 'failed',
-                'error': 'invalid team id'
-            })
-
-        team_name = request.data['team_name'].strip()
-        if not is_team_name_unique(team_name, team_id):
-            return JsonResponse({
-                'status': 'failed',
-                'error': 'non-unique team name'
-            })
-
-        members_id = request.data['members_id']
-        for member_id in members_id:
-            if not User.objects.filter(id=member_id).exists():
+            team_name = request.data['team_name'].strip()
+            if not is_team_name_unique(team_name):
                 return JsonResponse({
                     'status': 'failed',
-                    'error': 'invalid member id'
+                    'error': 'non-unique team name'
                 })
 
-        team = Team.objects.get(id=team_id)
-        team.name = team_name
-        team.members.clear()
+            members_id = request.data['members_id']
+            for member_id in members_id:
+                if not User.objects.filter(id=member_id).exists():
+                    return JsonResponse({
+                        'status': 'failed',
+                        'error': 'invalid member id'
+                    })
 
-        for member_id in members_id:
-            member = User.objects.get(id=member_id)
-            team.members.add(member)
-            member.teams.add(team)
-        team.save()
+            team = Team.objects.create(
+                name=team_name,
+                leader=User.objects.get(id=leader_id)
+            )
 
-        return JsonResponse({
-            'status': 'OK',
-            'error': None
-        })
+            for member_id in members_id:
+                member = User.objects.get(id=member_id)
+                team.members.add(member)
+                member.teams.add(team)
 
-    if 'team_id' in request.data and len(request.data) == 1:
-        team_id = request.data['team_id']
-
-        if not Team.objects.filter(id=team_id).exists():
             return JsonResponse({
-                'status': 'failed',
-                'error': 'invalid team id'
+                'status': 'OK',
+                'error': None
             })
 
-        Team.objects.get(id=team_id).delete()
-        return JsonResponse({
-            'status': 'OK',
-            'error': None
-        })
+        if 'team_id' in request.data and 'team_name' in request.data and 'members_id' in request.data and \
+                len(request.data) == 3:
+            team_id = request.data['team_id']
+            if not Team.objects.filter(id=team_id).exists():
+                return JsonResponse({
+                    'status': 'failed',
+                    'error': 'invalid team id'
+                })
 
-    return JsonResponse({
-        'status': 'failed',
-        'error': 'invalid request'
-    })
+            team_name = request.data['team_name'].strip()
+            if not is_team_name_unique(team_name, team_id):
+                return JsonResponse({
+                    'status': 'failed',
+                    'error': 'non-unique team name'
+                })
+
+            members_id = request.data['members_id']
+            for member_id in members_id:
+                if not User.objects.filter(id=member_id).exists():
+                    return JsonResponse({
+                        'status': 'failed',
+                        'error': 'invalid member id'
+                    })
+
+            team = Team.objects.get(id=team_id)
+            team.name = team_name
+            team.members.clear()
+
+            for member_id in members_id:
+                member = User.objects.get(id=member_id)
+                team.members.add(member)
+                member.teams.add(team)
+            team.save()
+
+            return JsonResponse({
+                'status': 'OK',
+                'error': None
+            })
+
+        if 'team_id' in request.data and len(request.data) == 1:
+            team_id = request.data['team_id']
+
+            if not Team.objects.filter(id=team_id).exists():
+                return JsonResponse({
+                    'status': 'failed',
+                    'error': 'invalid team id'
+                })
+
+            Team.objects.get(id=team_id).delete()
+            return JsonResponse({
+                'status': 'OK',
+                'error': None
+            })
+
+        return JsonResponse({
+            'status': 'failed',
+            'error': 'invalid request'
+        })
