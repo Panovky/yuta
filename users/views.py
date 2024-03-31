@@ -13,20 +13,26 @@ class ProfileView(View):
     def get(self, request, url_user_id):
         if not request.session['user_id']:
             return redirect('main')
-        session_user_id = request.session['user_id']
-        user = User.objects.get(id=url_user_id)
 
-        return render(
-            request,
-            'profile.html',
-            context={
-                **UserSerializer(user).data,
-                'menu_user_id': session_user_id,
-                'is_owner': url_user_id == session_user_id,
-                'is_default_photo': 'default-user-photo' in user.photo.url,
-                'timestamp': int(datetime.datetime.now().timestamp()),
-            }
-        )
+        if len(request.GET) == 0:
+            session_user_id = request.session['user_id']
+            user = User.objects.get(id=url_user_id)
+
+            return render(
+                request,
+                'profile.html',
+                context={
+                    **UserSerializer(user).data,
+                    'menu_user_id': session_user_id,
+                    'is_owner': url_user_id == session_user_id,
+                    'is_default_photo': 'default-user-photo' in user.photo.url,
+                    'timestamp': int(datetime.datetime.now().timestamp()),
+                }
+            )
+
+        if 'user_name' in request.GET and len(request.GET) == 1:
+            user_name = request.GET['user_name']
+            return JsonResponse(data=User.objects.search(user_name).as_found())
 
     def post(self, request, url_user_id):
         if not request.session['user_id']:
@@ -34,10 +40,6 @@ class ProfileView(View):
         session_user_id = request.session['user_id']
         user = User.objects.get(id=session_user_id)
         action = request.POST['action']
-
-        if action == 'navbar_search_user':
-            user_name = request.POST['navbar_user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
 
         if action == 'update_photo':
             photo = request.FILES['photo']

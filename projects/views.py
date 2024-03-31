@@ -12,35 +12,37 @@ class ProjectsView(View):
     def get(self, request):
         if not request.session['user_id']:
             return redirect('main')
-        session_user_id = request.session['user_id']
-        user = User.objects.get(id=session_user_id)
-        today = datetime.date.today().isoformat()
-        timestamp = int(datetime.datetime.now().timestamp())
-        managed_projects = user.manager_projects.all()
-        others_projects = [project for team in user.teams.all() for project in team.team_projects.all()]
 
-        return render(
-            request,
-            'projects.html',
-            context={
-                'user': user,
-                'today': today,
-                'timestamp': timestamp,
-                'managed_projects': managed_projects,
-                'others_projects': others_projects,
-                'menu_user_id': session_user_id
-            }
-        )
+        if len(request.GET) == 0:
+            session_user_id = request.session['user_id']
+            user = User.objects.get(id=session_user_id)
+            today = datetime.date.today().isoformat()
+            timestamp = int(datetime.datetime.now().timestamp())
+            managed_projects = user.manager_projects.all()
+            others_projects = [project for team in user.teams.all() for project in team.team_projects.all()]
+
+            return render(
+                request,
+                'projects.html',
+                context={
+                    'user': user,
+                    'today': today,
+                    'timestamp': timestamp,
+                    'managed_projects': managed_projects,
+                    'others_projects': others_projects,
+                    'menu_user_id': session_user_id
+                }
+            )
+
+        if 'user_name' in request.GET and len(request.GET) == 1:
+            user_name = request.GET['user_name']
+            return JsonResponse(data=User.objects.search(user_name).as_found())
 
     def post(self, request):
         if not request.session['user_id']:
             return redirect('main')
         session_user_id = request.session['user_id']
         action = request.POST['action']
-
-        if action == 'navbar_search_user':
-            user_name = request.POST['navbar_user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
 
         if action == 'delete_project':
             Project.objects.get(id=request.POST['project_id']).delete()
