@@ -7,13 +7,9 @@ export function navbarSearchUsers() {
     if (navbarUserNameInput) {
         navbarUserNameInput.addEventListener('input', () => {
             let navbarUserName = navbarUserNameInput.value.trim();
-            let formData = new FormData();
-            formData.append('action', 'navbar_search_user');
-            formData.append('navbar_user_name', navbarUserName);
 
-            fetch('', {
-                method: 'POST',
-                body: formData,
+            fetch(`?user_name=${navbarUserName}`, {
+                method: 'GET',
                 headers: {
                     "X-CSRFToken": token,
                 }

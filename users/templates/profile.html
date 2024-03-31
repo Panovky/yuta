@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}<title>{{ user.last_name }} {{ user.first_name }}</title>{% endblock title %}
+{% block title %}<title>{{ last_name }} {{ first_name }}</title>{% endblock title %}
 
 {% load static %}
 
@@ -10,7 +10,7 @@
             {% if is_owner %}
             <div class="avatar-wrapper">
                 <div class="avatar-img-wrapper">
-                    <img src="{{ user.cropped_photo.url }}?timestamp={{ timestamp }}" alt="аватарка">
+                    <img src="{{ cropped_photo }}?timestamp={{ timestamp }}" alt="аватарка">
                 </div>
                 <button type="button" id="choiceAvatartBtn" data-bs-toggle="dropdown" aria-expanded="false">
                     <svg style="width: 40px; height: 40px;">
@@ -52,7 +52,7 @@
             {% else %}
             <div class="avatar-wrapper avatar-img-wrapper--not-owner">
                 <div class="avatar-img-wrapper">
-                    <img src="{{ user.cropped_photo.url }}?timestamp={{ timestamp }}" alt="аватарка">
+                    <img src="{{ cropped_photo }}?timestamp={{ timestamp }}" alt="аватарка">
                 </div>
             </div>
             {% endif %}
@@ -88,7 +88,7 @@
                                         </button>
                                     </div>
                                     <div style="display: none" class="input-file-list">
-                                        <img src="{% static 'images/default.png' %}" id="output"/>
+                                        <img src="" id="output"/>
                                     </div>
                                 </div>
                                 <input type="hidden" name="action" value="update_photo">
@@ -120,7 +120,7 @@
 
                                 <div class="wrapperCrop d-flex justify-content-center align-items-sm-start">
                                     <div>
-                                        <img src="{{ user.photo.url }}?timestamp={{ timestamp }}" id="imageCrop">
+                                        <img src="{{ photo }}?timestamp={{ timestamp }}" id="imageCrop">
                                     </div>
                                     <div class="ms-lg-4 ms-md-0 ms-sm-0 ms-0 mt-lg-0 mt-md-3 mt-sm-3 mt-3">
                                         <div class="preview"></div>
@@ -177,14 +177,14 @@
     </div>
     <div class="container-xxl">
         <div class="position-relative text-center">
-            {% if user.patronymic is not None %}
-                <p class="person-name">{{ user.last_name }} {{ user.first_name }} {{ user.patronymic }}</p>
+            {% if patronymic is not None %}
+                <p class="person-name">{{ last_name }} {{ first_name }} {{ patronymic }}</p>
             {% else %}
-                <p class="person-name">{{ user.last_name }} {{ user.first_name }}</p>
+                <p class="person-name">{{ last_name }} {{ first_name }}</p>
             {% endif %}
-            <p class="person-age mt-2">{{ user.age }}</p>
-            {% if user.biography is not None %}
-                <p class="person-about mt-4">{{ user.biography }}</p>
+            <p class="person-age mt-2">{{ age }}</p>
+            {% if biography is not None %}
+                <p class="person-about mt-4">{{ biography }}</p>
             {% endif %}
 
             {% if is_owner %}
@@ -211,10 +211,10 @@
                                 <form method="POST" enctype="multipart/form-data" class="mt-2">
                                     {% csrf_token %}
 
-                                    {% if user.biography is not None %}
+                                    {% if biography is not None %}
                                         <div class="text-field__noticon mb-3">
                                             <textarea name="biography" maxlength="200"
-                                                      placeholder="O cебе">{{ user.biography }}</textarea>
+                                                      placeholder="O cебе">{{ biography }}</textarea>
                                         </div>
                                     {% else %}
                                         <div class="text-field__noticon mb-3">
@@ -222,10 +222,10 @@
                                         </div>
                                     {% endif %}
 
-                                    {% if user.phone_number is not None %}
+                                    {% if phone_number is not None %}
                                         <div class="text-field__noticon mb-3">
                                             <input type="text" class="phone" name="phone_number"
-                                                   value="{{ user.phone_number }}" placeholder="Телефон">
+                                                   value="{{ phone_number }}" placeholder="Телефон">
                                         </div>
                                     {% else %}
                                         <div class="text-field__noticon mb-3">
@@ -233,9 +233,9 @@
                                         </div>
                                     {% endif %}
 
-                                    {% if user.e_mail is not None %}
+                                    {% if e_mail is not None %}
                                         <div class="text-field__noticon mb-3">
-                                            <input type="email" name="e_mail" value="{{ user.e_mail }}"
+                                            <input type="email" name="e_mail" value="{{ e_mail }}"
                                                    placeholder="E-mail">
                                         </div>
                                     {% else %}
@@ -244,9 +244,9 @@
                                         </div>
                                     {% endif %}
 
-                                    {% if user.vk is not None %}
+                                    {% if vk is not None %}
                                         <div class="text-field__noticon mb-3">
-                                            <input type="text" class="link-vk" name="vk" value="{{ user.vk }}"
+                                            <input type="text" class="link-vk" name="vk" value="{{ vk }}"
                                                    placeholder="Ссылка на ВК">
                                         </div>
                                     {% else %}
@@ -322,53 +322,53 @@
             <svg style="width: 60px; height: 60px;">
                 <use xlink:href="{% static 'images/svg/sprite.svg' %}#study"></use>
             </svg>
-            <p>Факультет: {{ user.faculty.name }}</p>
-            <p>Направление: {{ user.direction.code }} - {{ user.direction.name }}</p>
-            <p>Группа: {{ user.group.name }}</p>
+            <p>Факультет: {{ faculty }}</p>
+            <p>Направление: {{ direction }}</p>
+            <p>Группа: {{ group }}</p>
         </div>
         <div class="statistic d-flex align-items-center justify-content-center">
             <div class="statistic-item text-center animate__animated animate__fadeInUp animate__faster">
                 <p class="item-title">Проекты</p>
-                <p class="item-meaning">{{ user.done_projects_count }}/{{ user.all_projects_count }}</p>
+                <p class="item-meaning">{{ done_projects_count }}/{{ all_projects_count }}</p>
             </div>
             <div class="statistic-item text-center wow animate__animated animate__fadeInUp animate__faster"
                  data-wow-delay="0.2s">
                 <p class="item-title">Задачи</p>
-                <p class="item-meaning">{{ user.done_tasks_count }}/{{ user.all_tasks_count }}</p>
+                <p class="item-meaning">{{ done_tasks_count }}/{{ all_tasks_count }}</p>
             </div>
             <div class="statistic-item text-center wow animate__animated animate__fadeInUp animate__faster"
                  data-wow-delay="0.4s">
                 <p class="item-title">Команды</p>
-                <p class="item-meaning">{{ user.teams_count }}</p>
+                <p class="item-meaning">{{ teams_count }}</p>
             </div>
         </div>
 
         <div class="contacts d-flex align-items-center justify-content-center">
 
-            {% if user.phone_number is not None %}
+            {% if phone_number is not None %}
                 <div class="contacts-item d-flex align-items-center justify-content-center">
                     <svg>
                         <use xlink:href="{% static 'images/svg/sprite.svg' %}#phone"></use>
                     </svg>
-                    <p>{{ user.phone_number }}</p>
+                    <p>{{ phone_number }}</p>
                 </div>
             {% endif %}
 
-            {% if user.e_mail is not None %}
+            {% if e_mail is not None %}
                 <div class="contacts-item d-flex align-items-center justify-content-center">
                     <svg>
                         <use xlink:href="{% static 'images/svg/sprite.svg' %}#message"></use>
                     </svg>
-                    <p>{{ user.e_mail }}</p>
+                    <p>{{ e_mail }}</p>
                 </div>
             {% endif %}
 
-            {% if user.vk is not None %}
+            {% if vk is not None %}
                 <div class="contacts-item d-flex align-items-center justify-content-center">
                     <svg>
                         <use xlink:href="{% static 'images/svg/sprite.svg' %}#vk"></use>
                     </svg>
-                    <p><a href="{{ user.vk }}">{{ user.vk }}</a></p>
+                    <p><a href="{{ vk }}">{{ vk }}</a></p>
                 </div>
             {% endif %}
 

@@ -12,31 +12,33 @@ class TeamsView(View):
     def get(self, request):
         if not request.session['user_id']:
             return redirect('main')
-        session_user_id = request.session['user_id']
-        user = User.objects.get(id=session_user_id)
-        managed_teams = user.leader_teams.all()
-        others_teams = user.teams.all()
-        timestamp = int(datetime.datetime.now().timestamp())
 
-        return render(
-            request,
-            'teams.html',
-            context={
-                'managed_teams': managed_teams,
-                'others_teams': others_teams,
-                'timestamp': timestamp,
-                'menu_user_id': session_user_id
-            }
-        )
+        if len(request.GET) == 0:
+            session_user_id = request.session['user_id']
+            user = User.objects.get(id=session_user_id)
+            managed_teams = user.leader_teams.all()
+            others_teams = user.teams.all()
+            timestamp = int(datetime.datetime.now().timestamp())
+
+            return render(
+                request,
+                'teams.html',
+                context={
+                    'managed_teams': managed_teams,
+                    'others_teams': others_teams,
+                    'timestamp': timestamp,
+                    'menu_user_id': session_user_id
+                }
+            )
+
+        if 'user_name' in request.GET and len(request.GET) == 1:
+            user_name = request.GET['user_name']
+            return JsonResponse(data=User.objects.search(user_name).as_found())
 
     def post(self, request):
         if not request.session['user_id']:
             return redirect('main')
         action = request.POST['action']
-
-        if action == 'navbar_search_user':
-            user_name = request.POST['navbar_user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
 
         if action == 'delete_team':
             team_id = request.POST['team_id']

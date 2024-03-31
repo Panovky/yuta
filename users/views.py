@@ -6,29 +6,33 @@ from services.photo_cropper import crop_photo
 from YUTA.settings import MEDIA_ROOT
 from services.utils import edit_user_data, update_user_data
 from users.models import User
+from users.serializers import UserSerializer
 
 
 class ProfileView(View):
     def get(self, request, url_user_id):
         if not request.session['user_id']:
             return redirect('main')
-        session_user_id = request.session['user_id']
-        user = User.objects.get(id=url_user_id)
-        is_owner = url_user_id == session_user_id
-        is_default_photo = 'default_user_photo' in user.photo.url
-        timestamp = int(datetime.datetime.now().timestamp())
 
-        return render(
-            request,
-            'profile.html',
-            context={
-                'user': user,
-                'is_owner': is_owner,
-                'is_default_photo': is_default_photo,
-                'timestamp': timestamp,
-                'menu_user_id': session_user_id
-            }
-        )
+        if len(request.GET) == 0:
+            session_user_id = request.session['user_id']
+            user = User.objects.get(id=url_user_id)
+
+            return render(
+                request,
+                'profile.html',
+                context={
+                    **UserSerializer(user).data,
+                    'menu_user_id': session_user_id,
+                    'is_owner': url_user_id == session_user_id,
+                    'is_default_photo': 'default-user-photo' in user.photo.url,
+                    'timestamp': int(datetime.datetime.now().timestamp()),
+                }
+            )
+
+        if 'user_name' in request.GET and len(request.GET) == 1:
+            user_name = request.GET['user_name']
+            return JsonResponse(data=User.objects.search(user_name).as_found())
 
     def post(self, request, url_user_id):
         if not request.session['user_id']:
@@ -36,10 +40,6 @@ class ProfileView(View):
         session_user_id = request.session['user_id']
         user = User.objects.get(id=session_user_id)
         action = request.POST['action']
-
-        if action == 'navbar_search_user':
-            user_name = request.POST['navbar_user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
 
         if action == 'update_photo':
             photo = request.FILES['photo']
@@ -83,20 +83,17 @@ class ProfileView(View):
 
             if not update_user_data(user, password):
                 session_user_id = request.session['user_id']
-                is_owner = url_user_id == session_user_id
-                is_default_photo = 'default_user_photo' in user.photo.url
-                timestamp = int(datetime.datetime.now().timestamp())
 
                 return render(
                     request,
                     'profile.html',
                     context={
-                        'user': user,
-                        'is_owner': is_owner,
-                        'is_default_photo': is_default_photo,
+                        **UserSerializer(user).data,
+                        'menu_user_id': session_user_id,
+                        'is_owner': url_user_id == session_user_id,
+                        'is_default_photo': 'default-user-photo' in user.photo.url,
+                        'timestamp': int(datetime.datetime.now().timestamp()),
                         'message': 'Неправильный пароль.',
-                        'timestamp': timestamp,
-                        'menu_user_id': session_user_id
                     }
                 )
 
