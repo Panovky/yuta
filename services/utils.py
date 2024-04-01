@@ -120,32 +120,6 @@ def update_user_data(user: User, password: str) -> bool:
         return True
 
 
-def get_team_info(team_id: int) -> dict:
-    """
-    Принимает id команды в базе данных и возвращает словарь с информацией об этой команде.
-
-    :param team_id: идентификатор команды в базе данных
-    :type team_id: int
-    :return: словарь с информацией о команде
-    :rtype: dict
-    """
-    team = Team.objects.get(id=team_id)
-
-    return {
-        'name': team.name,
-        'members': [
-            {
-                'id': member.id,
-                'first_name': member.first_name,
-                'last_name': member.last_name,
-                'patronymic': member.patronymic,
-                'cropped_photo_url': member.cropped_photo.url
-            }
-            for member in team.members.all()
-        ]
-    }
-
-
 def get_project_info(project_id: int) -> dict:
     """
     Принимает id проекта в базе данных и возвращает словарь с информацией об этом проекте.

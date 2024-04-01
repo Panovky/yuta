@@ -3,8 +3,8 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
-from services.utils import get_team_info
 from teams.models import Team
+from teams.serializers import TeamSerializer
 from users.models import User
 
 
@@ -16,24 +16,22 @@ class TeamsView(View):
         if len(request.GET) == 0:
             session_user_id = request.session['user_id']
             user = User.objects.get(id=session_user_id)
-            managed_teams = user.leader_teams.all()
-            others_teams = user.teams.all()
-            timestamp = int(datetime.datetime.now().timestamp())
-
             return render(
                 request,
                 'teams.html',
                 context={
-                    'managed_teams': managed_teams,
-                    'others_teams': others_teams,
-                    'timestamp': timestamp,
+                    'managed_teams': user.leader_teams.all(),
+                    'others_teams': user.teams.all(),
+                    'timestamp': int(datetime.datetime.now().timestamp()),
                     'menu_user_id': session_user_id
                 }
             )
 
+        if 'team_id' in request.GET and len(request.GET) == 1:
+            return JsonResponse(data=TeamSerializer(Team.objects.get(id=request.GET['team_id'])).data)
+
         if 'user_name' in request.GET and len(request.GET) == 1:
-            user_name = request.GET['user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
+            return JsonResponse(data=User.objects.search(request.GET['user_name']).as_found())
 
     def post(self, request):
         if not request.session['user_id']:
@@ -98,7 +96,3 @@ class TeamsView(View):
 
             team.save()
             return redirect('teams')
-
-        if action == 'get_team_info':
-            team_id = request.POST['team_id']
-            return JsonResponse(data=get_team_info(team_id))

@@ -3,14 +3,14 @@ import json
 import re
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from services.photo_cropper import crop_photo
 from YUTA.settings import MEDIA_ROOT
-from services.utils import authorize_user, edit_user_data, update_user_data, get_team_info, \
-    is_team_name_unique, get_project_info
+from services.photo_cropper import crop_photo
+from services.utils import authorize_user, edit_user_data, update_user_data, is_team_name_unique, get_project_info
 from projects.models import Project
 from teams.models import Team
+from teams.serializers import TeamSerializer
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import FullUserSerializer
 
 
 class AuthorizationView(APIView):
@@ -66,7 +66,7 @@ class ProfileView(APIView):
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'user': UserSerializer(user).data
+                'user': FullUserSerializer(user).data
             })
 
         return JsonResponse({
@@ -418,14 +418,12 @@ class TeamsView(APIView):
                     'others_teams': None,
                 })
 
-            managed_teams = User.objects.get(id=user_id).leader_teams.all()
-            others_teams = User.objects.get(id=user_id).teams.all()
-
+            user = User.objects.get(id=user_id)
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'managed_teams': [team.serialize_for_teams_view() for team in managed_teams],
-                'others_teams': [team.serialize_for_teams_view() for team in others_teams],
+                'managed_teams': [TeamSerializer(team).data for team in user.leader_teams.all()],
+                'others_teams': [TeamSerializer(team).data for team in user.teams.all()],
             })
 
         if 'team_id' in request.query_params and len(request.query_params) == 1:
@@ -440,7 +438,7 @@ class TeamsView(APIView):
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'team': get_team_info(team_id)
+                'team': TeamSerializer(Team.objects.get(id=team_id)).data
             })
 
         if 'team_name' in request.query_params and len(request.query_params) == 1:

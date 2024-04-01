@@ -6,7 +6,7 @@ from services.photo_cropper import crop_photo
 from YUTA.settings import MEDIA_ROOT
 from services.utils import edit_user_data, update_user_data
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import FullUserSerializer
 
 
 class ProfileView(View):
@@ -22,7 +22,7 @@ class ProfileView(View):
                 request,
                 'profile.html',
                 context={
-                    **UserSerializer(user).data,
+                    **FullUserSerializer(user).data,
                     'menu_user_id': session_user_id,
                     'is_owner': url_user_id == session_user_id,
                     'is_default_photo': 'default-user-photo' in user.photo.url,
@@ -88,7 +88,7 @@ class ProfileView(View):
                     request,
                     'profile.html',
                     context={
-                        **UserSerializer(user).data,
+                        **FullUserSerializer(user).data,
                         'menu_user_id': session_user_id,
                         'is_owner': url_user_id == session_user_id,
                         'is_default_photo': 'default-user-photo' in user.photo.url,

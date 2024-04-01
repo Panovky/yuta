@@ -15,24 +15,3 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
-
-    def serialize_for_teams_view(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'leader': {
-                'id': self.leader.id,
-                'cropped_photo_url': self.leader.cropped_photo.url,
-                'last_name': self.leader.last_name,
-                'first_name': self.leader.first_name,
-            },
-            'members': [
-                {
-                    'id': member.id,
-                    'cropped_photo_url': member.cropped_photo.url,
-                    'last_name': member.last_name,
-                    'first_name': member.first_name,
-                }
-                for member in self.members.all()
-            ],
-        }
