@@ -50,18 +50,14 @@ function checkTeamName(action) {
         return;
     }
 
-    let formData = new FormData();
-    formData.append('action', 'check_team_name');
-    formData.append('team_name', teamName);
-
+    let url = `?team_name=${teamName}`;
     if (action == 'edit-team') {
         let teamId = form.querySelector('[name=team_id]').value;
-        formData.append('team_id', teamId);
+        url = url + `&team_id=${teamId}`;
     }
 
-    fetch('', {
-        method: 'POST',
-        body: formData,
+    fetch(url, {
+        method: 'GET',
         headers: {
             "X-CSRFToken": token,
         }
@@ -128,14 +124,8 @@ function searchUser(e) {
         membersId.push(+member.dataset.memberId);
     });
 
-    let formData = new FormData();
-    formData.append('action', 'search_user');
-    formData.append('user_name', userName);
-    formData.append('members_id', JSON.stringify(membersId));
-
-    fetch('', {
-        method: 'POST',
-        body: formData,
+    fetch(`?user_name=${userName}&members_id=${JSON.stringify(membersId)}`, {
+        method: 'GET',
         headers: {
             "X-CSRFToken": token,
         }
@@ -277,7 +267,6 @@ function createTeam() {
     });
 
     let formData = new FormData();
-    formData.append('action', 'create_team');
     formData.append('team_name', teamName);
     formData.append('members_id', JSON.stringify(membersId));
 
@@ -306,7 +295,6 @@ function editTeam() {
     });
 
     let formData = new FormData();
-    formData.append('action', 'edit_team');
     formData.append('team_id', teamId);
     formData.append('team_name', teamName);
     formData.append('members_id', JSON.stringify(membersId));
@@ -329,13 +317,8 @@ editTeamBtns.forEach(btn => {
         let token = getCSRFToken();
         let teamId = e.currentTarget.dataset.teamId;
 
-        let formData = new FormData();
-        formData.append('action', 'get_team_info');
-        formData.append('team_id', teamId);
-
-        fetch('', {
-            method: 'POST',
-            body: formData,
+        fetch(`?team_id=${teamId}`, {
+            method: 'GET',
             headers: {
                 "X-CSRFToken": token,
             }
@@ -358,8 +341,7 @@ editTeamBtns.forEach(btn => {
                     innerBlockMember.classList.add('member-user__inner');
 
                     let img = document.createElement('img');
-                    console.log(m.cropped_photo_url + '?timestamp=' + Date.now());
-                    img.src = m.cropped_photo_url + '?timestamp=' + Date.now();
+                    img.src = m.cropped_photo + '?timestamp=' + Date.now();
 
                     let name = document.createElement('p');
                     name.innerHTML = `${m.last_name} ${m.first_name} ${m.patronymic ? m.patronymic : ''}`;

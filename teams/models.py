@@ -2,11 +2,42 @@ from django.db import models
 from users.models import User
 
 
+class TeamQuerySet(models.query.QuerySet):
+    def create_team(self, **kwargs):
+        team = self.create(
+            name=kwargs['name'],
+            leader_id=kwargs['leader_id']
+        )
+        for member_id in kwargs['members_id']:
+            member = User.objects.get(id=member_id)
+            team.members.add(member)
+            member.teams.add(team)
+
+    def update_team(self, **kwargs):
+        team = Team.objects.get(id=kwargs['id'])
+        team.name = kwargs['name']
+        team.members.clear()
+        for member_id in kwargs['members_id']:
+            member = User.objects.get(id=member_id)
+            team.members.add(member)
+            member.teams.add(team)
+        team.save()
+
+
+class BaseTeamManager(models.Manager):
+    pass
+
+
+class TeamManager(BaseTeamManager.from_queryset(TeamQuerySet)):
+    pass
+
+
 class Team(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     leader = models.ForeignKey(User, related_name='leader_teams', null=True, on_delete=models.SET_NULL)
     members = models.ManyToManyField(User)
+
+    objects = TeamManager()
 
     class Meta:
         verbose_name = 'Команда'
@@ -15,24 +46,3 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
-
-    def serialize_for_teams_view(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'leader': {
-                'id': self.leader.id,
-                'cropped_photo_url': self.leader.cropped_photo.url,
-                'last_name': self.leader.last_name,
-                'first_name': self.leader.first_name,
-            },
-            'members': [
-                {
-                    'id': member.id,
-                    'cropped_photo_url': member.cropped_photo.url,
-                    'last_name': member.last_name,
-                    'first_name': member.first_name,
-                }
-                for member in self.members.all()
-            ],
-        }

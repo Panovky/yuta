@@ -3,14 +3,14 @@ import json
 import re
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from services.photo_cropper import crop_photo
 from YUTA.settings import MEDIA_ROOT
-from services.utils import authorize_user, edit_user_data, update_user_data, get_team_info, \
-    is_team_name_unique, get_project_info
+from services.photo_cropper import crop_photo
+from services.utils import authorize_user, edit_user_data, update_user_data, is_team_name_unique, get_project_info
 from projects.models import Project
 from teams.models import Team
+from teams.serializers import TeamSerializer
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import FullUserSerializer
 
 
 class AuthorizationView(APIView):
@@ -66,7 +66,7 @@ class ProfileView(APIView):
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'user': UserSerializer(user).data
+                'user': FullUserSerializer(user).data
             })
 
         return JsonResponse({
@@ -418,14 +418,12 @@ class TeamsView(APIView):
                     'others_teams': None,
                 })
 
-            managed_teams = User.objects.get(id=user_id).leader_teams.all()
-            others_teams = User.objects.get(id=user_id).teams.all()
-
+            user = User.objects.get(id=user_id)
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'managed_teams': [team.serialize_for_teams_view() for team in managed_teams],
-                'others_teams': [team.serialize_for_teams_view() for team in others_teams],
+                'managed_teams': [TeamSerializer(team).data for team in user.leader_teams.all()],
+                'others_teams': [TeamSerializer(team).data for team in user.teams.all()],
             })
 
         if 'team_id' in request.query_params and len(request.query_params) == 1:
@@ -440,15 +438,14 @@ class TeamsView(APIView):
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'team': get_team_info(team_id)
+                'team': TeamSerializer(Team.objects.get(id=team_id)).data
             })
 
         if 'team_name' in request.query_params and len(request.query_params) == 1:
-            team_name = request.query_params['team_name'].strip()
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'unique': is_team_name_unique(team_name)
+                'unique': is_team_name_unique(request.query_params['team_name'].strip())
             })
 
         if 'team_name' in request.query_params and 'team_id' in request.query_params and len(request.query_params) == 2:
@@ -460,12 +457,10 @@ class TeamsView(APIView):
                     'unique': None
                 })
 
-            team_name = request.query_params['team_name'].strip()
-
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'unique': is_team_name_unique(team_name, team_id)
+                'unique': is_team_name_unique(request.query_params['team_name'].strip(), team_id)
             })
 
         if 'user_name' in request.query_params and 'leader_id' in request.query_params and \
@@ -522,15 +517,11 @@ class TeamsView(APIView):
                         'error': 'invalid member id'
                     })
 
-            team = Team.objects.create(
+            Team.objects.create_team(
                 name=team_name,
-                leader=User.objects.get(id=leader_id)
+                leader_id=leader_id,
+                members_id=json.loads(members_id)
             )
-
-            for member_id in members_id:
-                member = User.objects.get(id=member_id)
-                team.members.add(member)
-                member.teams.add(team)
 
             return JsonResponse({
                 'status': 'OK',
@@ -561,15 +552,11 @@ class TeamsView(APIView):
                         'error': 'invalid member id'
                     })
 
-            team = Team.objects.get(id=team_id)
-            team.name = team_name
-            team.members.clear()
-
-            for member_id in members_id:
-                member = User.objects.get(id=member_id)
-                team.members.add(member)
-                member.teams.add(team)
-            team.save()
+            Team.objects.update_team(
+                id=team_id,
+                name=team_name,
+                members_id=json.loads(members_id)
+            )
 
             return JsonResponse({
                 'status': 'OK',
@@ -578,7 +565,6 @@ class TeamsView(APIView):
 
         if 'team_id' in request.data and len(request.data) == 1:
             team_id = request.data['team_id']
-
             if not Team.objects.filter(id=team_id).exists():
                 return JsonResponse({
                     'status': 'failed',
