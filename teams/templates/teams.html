@@ -225,7 +225,6 @@
                     <div class="modal-devider"></div>
                     <form method="POST" class="mt-2" id="delete-team-form">
                         {% csrf_token %}
-                        <input class="form-control" type="hidden" name="action" value="delete_team">
                         <p class="text-start fs-5 my-3">Вы действительно хотите удалить команду «<span></span>»?</p>
                         <input class="form-control" type="hidden" name="team_id">
                         <div class="d-flex justify-content-end mt-4">

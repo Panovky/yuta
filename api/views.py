@@ -517,15 +517,11 @@ class TeamsView(APIView):
                         'error': 'invalid member id'
                     })
 
-            team = Team.objects.create(
+            Team.objects.create_team(
                 name=team_name,
-                leader=User.objects.get(id=leader_id)
+                leader_id=leader_id,
+                members_id=json.loads(members_id)
             )
-
-            for member_id in members_id:
-                member = User.objects.get(id=member_id)
-                team.members.add(member)
-                member.teams.add(team)
 
             return JsonResponse({
                 'status': 'OK',
@@ -556,15 +552,11 @@ class TeamsView(APIView):
                         'error': 'invalid member id'
                     })
 
-            team = Team.objects.get(id=team_id)
-            team.name = team_name
-            team.members.clear()
-
-            for member_id in members_id:
-                member = User.objects.get(id=member_id)
-                team.members.add(member)
-                member.teams.add(team)
-            team.save()
+            Team.objects.update_team(
+                id=team_id,
+                name=team_name,
+                members_id=json.loads(members_id)
+            )
 
             return JsonResponse({
                 'status': 'OK',
@@ -573,7 +565,6 @@ class TeamsView(APIView):
 
         if 'team_id' in request.data and len(request.data) == 1:
             team_id = request.data['team_id']
-
             if not Team.objects.filter(id=team_id).exists():
                 return JsonResponse({
                     'status': 'failed',

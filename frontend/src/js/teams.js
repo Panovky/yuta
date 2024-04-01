@@ -267,7 +267,6 @@ function createTeam() {
     });
 
     let formData = new FormData();
-    formData.append('action', 'create_team');
     formData.append('team_name', teamName);
     formData.append('members_id', JSON.stringify(membersId));
 
@@ -296,7 +295,6 @@ function editTeam() {
     });
 
     let formData = new FormData();
-    formData.append('action', 'edit_team');
     formData.append('team_id', teamId);
     formData.append('team_name', teamName);
     formData.append('members_id', JSON.stringify(membersId));

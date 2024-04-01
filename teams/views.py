@@ -49,42 +49,24 @@ class TeamsView(View):
     def post(self, request):
         if not request.session['user_id']:
             return redirect('main')
-        action = request.POST['action']
 
-        if action == 'delete_team':
-            team_id = request.POST['team_id']
-            Team.objects.get(id=team_id).delete()
-            return redirect('teams')
-
-        if action == 'create_team':
-            team_name = request.POST['team_name'].strip()
-            team_leader = User.objects.get(id=request.session['user_id'])
-
-            team = Team.objects.create(
-                name=team_name,
-                leader=team_leader
+        if 'team_name' in request.POST and 'members_id' in request.POST and len(request.POST) == 2:
+            Team.objects.create_team(
+                name=request.POST['team_name'].strip(),
+                leader_id=request.session['user_id'],
+                members_id=json.loads(request.POST['members_id'])
             )
-
-            team_members_id = json.loads(request.POST['members_id'])
-            for member_id in team_members_id:
-                member = User.objects.get(id=member_id)
-                team.members.add(member)
-                member.teams.add(team)
-
             return redirect('teams')
 
-        if action == 'edit_team':
-            team_id = request.POST['team_id']
-            team_name = request.POST['team_name'].strip()
-            team = Team.objects.get(id=team_id)
-            team.name = team_name
+        if 'team_id' in request.POST and 'team_name' in request.POST and 'members_id' in request.POST and \
+                len(request.POST) == 3:
+            Team.objects.update_team(
+                id=request.POST['team_id'],
+                name=request.POST['team_name'].strip(),
+                members_id=json.loads(request.POST['members_id'])
+            )
+            return redirect('teams')
 
-            team.members.clear()
-            team_members_id = json.loads(request.POST['members_id'])
-            for member_id in team_members_id:
-                member = User.objects.get(id=member_id)
-                team.members.add(member)
-                member.teams.add(team)
-
-            team.save()
+        if 'team_id' in request.POST and len(request.POST) == 1:
+            Team.objects.get(id=request.POST['team_id']).delete()
             return redirect('teams')
