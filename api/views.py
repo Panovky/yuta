@@ -442,11 +442,10 @@ class TeamsView(APIView):
             })
 
         if 'team_name' in request.query_params and len(request.query_params) == 1:
-            team_name = request.query_params['team_name'].strip()
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'unique': is_team_name_unique(team_name)
+                'unique': is_team_name_unique(request.query_params['team_name'].strip())
             })
 
         if 'team_name' in request.query_params and 'team_id' in request.query_params and len(request.query_params) == 2:
@@ -458,12 +457,10 @@ class TeamsView(APIView):
                     'unique': None
                 })
 
-            team_name = request.query_params['team_name'].strip()
-
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'unique': is_team_name_unique(team_name, team_id)
+                'unique': is_team_name_unique(request.query_params['team_name'].strip(), team_id)
             })
 
         if 'user_name' in request.query_params and 'leader_id' in request.query_params and \

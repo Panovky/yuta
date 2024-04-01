@@ -3,9 +3,10 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
-from teams.models import Team
-from teams.serializers import TeamSerializer
+from services.utils import is_team_name_unique
 from users.models import User
+from .models import Team
+from .serializers import TeamSerializer
 
 
 class TeamsView(View):
@@ -30,6 +31,18 @@ class TeamsView(View):
         if 'team_id' in request.GET and len(request.GET) == 1:
             return JsonResponse(data=TeamSerializer(Team.objects.get(id=request.GET['team_id'])).data)
 
+        if 'team_name' in request.GET and len(request.GET) == 1:
+            return JsonResponse({'unique': is_team_name_unique(request.GET['team_name'].strip())})
+
+        if 'team_name' in request.GET and 'team_id' in request.GET and len(request.GET) == 2:
+            return JsonResponse({'unique': is_team_name_unique(request.GET['team_name'].strip(), request.GET['team_id'])})
+
+        if 'user_name' in request.GET and 'members_id' in request.GET and len(request.GET) == 2:
+            user_name = request.GET['user_name']
+            leader_id = request.session['user_id']
+            members_id = json.loads(request.GET['members_id'])
+            return JsonResponse(data=User.objects.search(user_name, leader_id, members_id).as_found())
+
         if 'user_name' in request.GET and len(request.GET) == 1:
             return JsonResponse(data=User.objects.search(request.GET['user_name']).as_found())
 
@@ -42,27 +55,6 @@ class TeamsView(View):
             team_id = request.POST['team_id']
             Team.objects.get(id=team_id).delete()
             return redirect('teams')
-
-        if action == 'check_team_name':
-            new_team_name = request.POST['team_name'].strip()
-
-            if request.POST.get('team_id'):
-                team_id = request.POST['team_id']
-                old_team_name = Team.objects.get(id=team_id).name
-                if new_team_name == old_team_name:
-                    return JsonResponse({
-                        'unique': True}
-                    )
-
-            return JsonResponse({
-                'unique': not Team.objects.filter(name=new_team_name).exists()
-            })
-
-        if action == 'search_user':
-            user_name = request.POST['user_name']
-            leader_id = request.session['user_id']
-            members_id = json.loads(request.POST['members_id'])
-            return JsonResponse(data=User.objects.search(user_name, leader_id, members_id).as_found())
 
         if action == 'create_team':
             team_name = request.POST['team_name'].strip()

@@ -50,18 +50,14 @@ function checkTeamName(action) {
         return;
     }
 
-    let formData = new FormData();
-    formData.append('action', 'check_team_name');
-    formData.append('team_name', teamName);
-
+    let url = `?team_name=${teamName}`;
     if (action == 'edit-team') {
         let teamId = form.querySelector('[name=team_id]').value;
-        formData.append('team_id', teamId);
+        url = url + `&team_id=${teamId}`;
     }
 
-    fetch('', {
-        method: 'POST',
-        body: formData,
+    fetch(url, {
+        method: 'GET',
         headers: {
             "X-CSRFToken": token,
         }
@@ -128,14 +124,8 @@ function searchUser(e) {
         membersId.push(+member.dataset.memberId);
     });
 
-    let formData = new FormData();
-    formData.append('action', 'search_user');
-    formData.append('user_name', userName);
-    formData.append('members_id', JSON.stringify(membersId));
-
-    fetch('', {
-        method: 'POST',
-        body: formData,
+    fetch(`?user_name=${userName}&members_id=${JSON.stringify(membersId)}`, {
+        method: 'GET',
         headers: {
             "X-CSRFToken": token,
         }
