@@ -10,7 +10,7 @@ from projects.models import Project
 from teams.models import Team
 from teams.serializers import TeamSerializer
 from users.models import User
-from users.serializers import FullUserSerializer
+from users.serializers import FullUserSerializer, ShortUserSerializer
 
 
 class AuthorizationView(APIView):
@@ -41,9 +41,11 @@ class AuthorizationView(APIView):
 class SearchView(APIView):
     def get(self, request):
         if 'user_name' in request.query_params and len(request.query_params) == 1:
-            user_name = request.query_params['user_name']
-            users = User.objects.search(user_name).as_found()
-            return JsonResponse({'status': 'OK', 'error': None} | users)
+            return JsonResponse({
+                'status': 'OK',
+                'error': None,
+                'users': [ShortUserSerializer(user).data for user in User.objects.search(request.query_params['user_name'])]
+            })
 
         return JsonResponse({
             'status': 'failed',
@@ -484,8 +486,11 @@ class TeamsView(APIView):
                     })
 
             user_name = request.query_params['user_name']
-            users = User.objects.search(user_name, leader_id, members_id).as_found()
-            return JsonResponse({'status': 'OK', 'error': None} | users)
+            return JsonResponse({
+                'status': 'OK',
+                'error': None,
+                'users': [ShortUserSerializer(user).data for user in User.objects.search(user_name, leader_id, members_id)]
+            })
 
         return JsonResponse({
             'status': 'failed',

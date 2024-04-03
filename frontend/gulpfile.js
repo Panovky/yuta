@@ -103,6 +103,7 @@ export const js = () => {
 			entry: {
 				base: './src/js/base.js',
 				main: './src/js/main.js',
+				navbarSearchUsers: './src/js/navbarSearchUsers.js',
 				projects: './src/js/projects.js',
 				tasks: './src/js/tasks.js',
 				teams: './src/js/teams.js',

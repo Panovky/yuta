@@ -1,5 +1,4 @@
 import {getCSRFToken} from "./modules/utils.js";
-import {navbarSearchUsers} from "./modules/navbarSearchUsers.js";
 
 //ЭЛЕМЕНТЫ
 const deleteProjectForm = document.querySelector('#delete-project');
@@ -15,8 +14,6 @@ const projectStatusInput = document.querySelector('[name=project_status]');
 const projectDescrInputs = document.querySelectorAll('[name=project_description]');
 const teamNameInputs = document.querySelectorAll('[name=team_name]');
 const radios = document.querySelectorAll('[name=team_radio]');
-
-navbarSearchUsers()
 
 // УДАЛЕНИЕ ПРОЕКТА
 document.addEventListener('DOMContentLoaded', () => {

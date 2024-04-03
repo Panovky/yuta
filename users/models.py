@@ -1,7 +1,6 @@
 from django.db import models
 from datetime import date
 from django.db.models import QuerySet
-from django.urls import reverse
 from services.file_path_getter import get_file_path
 
 
@@ -87,21 +86,6 @@ class UserQuerySet(models.query.QuerySet):
             users = users.exclude(id__in=(leader_id, *members_id))
 
         return users
-
-    def as_found(self) -> dict:
-        return {
-            'users': [
-                {
-                    'id': user.id,
-                    'profile_url': reverse('profile', kwargs={'url_user_id': user.id}),
-                    'cropped_photo_url': user.cropped_photo.url,
-                    'last_name': user.last_name,
-                    'first_name': user.first_name,
-                    'patronymic': user.patronymic,
-                }
-                for user in self
-            ]
-        }
 
 
 class BaseUserManager(models.Manager):

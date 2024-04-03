@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from users.models import User
+from users.serializers import ShortUserSerializer
 
 
 class TasksView(View):
@@ -23,8 +24,9 @@ class TasksView(View):
             )
 
         if 'user_name' in request.GET and len(request.GET) == 1:
-            user_name = request.GET['user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
+            return JsonResponse(data={
+                'users': [ShortUserSerializer(user).data for user in User.objects.search(request.GET['user_name'])]
+            })
 
     def post(self, request):
         if not request.session['user_id']:
