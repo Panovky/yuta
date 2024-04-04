@@ -3,8 +3,9 @@
 {% block title %}<title>Задачи</title>{% endblock title %}
 
 {% block content %}
-<p class="fs-3 text-center mt-4">Доска задач пользователя "{{ user.last_name }} {{ user.first_name }}"</p>
+    <p class="fs-3 text-center mt-4">Доска задач пользователя "{{ user.last_name }} {{ user.first_name }}"</p>
 
-{% load static %}
-<script src="{% static 'js/tasks.js' %}"></script>
+    {% load static %}
+    <script src="{% static 'js/tasks.js' %}"></script>
+    <script src="{% static 'js/navbarSearchUsers.js' %}"></script>
 {% endblock %}

@@ -6,6 +6,7 @@ from projects.models import Project
 from teams.models import Team
 from users.models import User
 from services.utils import get_project_info
+from users.serializers import ShortUserSerializer
 
 
 class ProjectsView(View):
@@ -35,8 +36,9 @@ class ProjectsView(View):
             )
 
         if 'user_name' in request.GET and len(request.GET) == 1:
-            user_name = request.GET['user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
+            return JsonResponse(data={
+                'users': [ShortUserSerializer(user).data for user in User.objects.search(request.GET['user_name'])]
+            })
 
     def post(self, request):
         if not request.session['user_id']:

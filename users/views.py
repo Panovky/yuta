@@ -6,7 +6,7 @@ from services.photo_cropper import crop_photo
 from YUTA.settings import MEDIA_ROOT
 from services.utils import edit_user_data, update_user_data
 from users.models import User
-from users.serializers import FullUserSerializer
+from users.serializers import FullUserSerializer, ShortUserSerializer
 
 
 class ProfileView(View):
@@ -31,8 +31,9 @@ class ProfileView(View):
             )
 
         if 'user_name' in request.GET and len(request.GET) == 1:
-            user_name = request.GET['user_name']
-            return JsonResponse(data=User.objects.search(user_name).as_found())
+            return JsonResponse(data={
+                'users': [ShortUserSerializer(user).data for user in User.objects.search(request.GET['user_name'])]
+            })
 
     def post(self, request, url_user_id):
         if not request.session['user_id']:

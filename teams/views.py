@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from services.utils import is_team_name_unique
 from users.models import User
+from users.serializers import ShortUserSerializer
 from .models import Team
 from .serializers import TeamSerializer
 
@@ -41,10 +42,14 @@ class TeamsView(View):
             user_name = request.GET['user_name']
             leader_id = request.session['user_id']
             members_id = json.loads(request.GET['members_id'])
-            return JsonResponse(data=User.objects.search(user_name, leader_id, members_id).as_found())
+            return JsonResponse(data={
+                'users': [ShortUserSerializer(user).data for user in User.objects.search(user_name, leader_id, members_id)]
+            })
 
         if 'user_name' in request.GET and len(request.GET) == 1:
-            return JsonResponse(data=User.objects.search(request.GET['user_name']).as_found())
+            return JsonResponse(data={
+                'users': [ShortUserSerializer(user).data for user in User.objects.search(request.GET['user_name'])]
+            })
 
     def post(self, request):
         if not request.session['user_id']:
@@ -67,6 +72,6 @@ class TeamsView(View):
             )
             return redirect('teams')
 
-        if 'team_id' in request.POST and len(request.POST) == 1:
+        if 'team_id' in request.POST and len(request.POST) == 2:
             Team.objects.get(id=request.POST['team_id']).delete()
             return redirect('teams')
