@@ -525,7 +525,7 @@ class TeamsView(APIView):
             Team.objects.create_team(
                 name=team_name,
                 leader_id=leader_id,
-                members_id=json.loads(members_id)
+                members_id=members_id
             )
 
             return JsonResponse({
@@ -560,7 +560,7 @@ class TeamsView(APIView):
             Team.objects.update_team(
                 id=team_id,
                 name=team_name,
-                members_id=json.loads(members_id)
+                members_id=members_id
             )
 
             return JsonResponse({
