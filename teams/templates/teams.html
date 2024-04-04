@@ -67,14 +67,12 @@
                                         </g>
                                     </svg>
                                 </div>
-                                <p class="empty-results-text mt-2" style="display:none;">По вашему запросу пользователи
-                                    не найдены!</p>
                                 <div class="searched-users mt-3 d-flex flex-column">
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-center mt-4">
-                                <button id="create-team-btn" class="orange-btn grey-btn" type="button">Создать</button>
+                                <button id="create-team-btn" class="orange-btn" type="button">Создать</button>
                             </div>
                         </div>
                     </div>
@@ -307,14 +305,12 @@
                                     </g>
                                 </svg>
                             </div>
-                            <p class="empty-results-text mt-2" style="display:none;">По вашему запросу пользователи не
-                                найдены!</p>
                             <div class="searched-users mt-3 d-flex flex-column">
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-center mt-4">
-                            <button id="edit-team-btn" class="orange-btn grey-btn" type="button">Сохранить</button>
+                            <button id="edit-team-btn" class="orange-btn" type="button">Сохранить</button>
                         </div>
                     </div>
                 </div>
@@ -322,10 +318,10 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
     {% load static %}
-    <script src="{% static 'js/teams.js' %}"></script>
-    <script src="{% static 'js/navbarSearchUsers.js' %}"></script>
+    <script src="{% static 'js/teams.js' %}" defer></script>
+    <script src="{% static 'js/navbarSearchUsers.js' %}" defer></script>
 
 {% endblock content %}
 
