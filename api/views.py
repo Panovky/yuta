@@ -7,6 +7,7 @@ from YUTA.settings import MEDIA_ROOT
 from services.photo_cropper import crop_photo
 from services.utils import authorize_user, edit_user_data, update_user_data, is_team_name_unique, get_project_info
 from projects.models import Project
+from projects.serializers import ProjectSerializer
 from teams.models import Team
 from teams.serializers import TeamSerializer
 from users.models import User
@@ -231,8 +232,8 @@ class ProjectsView(APIView):
             return JsonResponse({
                 'status': 'OK',
                 'error': None,
-                'managed_projects': [project.serialize_for_projects_view() for project in managed_projects],
-                'others_projects': [project.serialize_for_projects_view() for project in others_projects],
+                'managed_projects': [ProjectSerializer(project).data for project in managed_projects],
+                'others_projects': [ProjectSerializer(project).data for project in others_projects],
             })
 
         if 'project_id' in request.query_params and len(request.query_params) == 1:
