@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Команды</title>{% endblock title %}
+
+{% load static %}
+
+{% block content %}
+
+    <main>
+        <div class="container">
+            <button class="orange-btn blue-btn blue-btn-sm my-4 d-flex gap-2 align-items-center"
+                    id="create-team-btn-modal">
+                <svg style="width: 20px; height: 26px;">
+                    <use xlink:href="{% static 'images/svg/sprite.svg' %}#create"></use>
+                </svg>
+                <p>Создать команду</p>
+            </button>
+            <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ КОМАНДЫ -->
+            <div class="modal fade modal-custom" id="create-team" tabindex="-1" aria-labelledby="create-team"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content modal-content-teams">
+                        <div class="modal-header position-relative">
+                            <button type="button" class="close-modal-btn close-modal-btn-teams" data-bs-dismiss="modal"
+                                    aria-label="Закрыть">
+                                <svg style="width: 28px; height: 28px;">
+                                    <use xlink:href="{% static 'images/svg/sprite.svg' %}#close"></use>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="modal-title text-center">Создание команды</p>
+                        <div class="modal-devider"></div>
+                        <div id="create-team-form">
+                            <p class="modal-text text-start">Придумайте краткое наименование команды:</p>
+                            <div class="text-field__noticon mb-2 mt-3 position-relative">
+                                <input data-action="create-team" class="nameTeamInput" type="text" name="team_name"
+                                       maxlength="50"
+                                       placeholder="Наименование" autocomplete="off" required>
+                                <span>*</span>
+                            </div>
+                            <p class="not-unique-warning mb-2" style="display: none; color: red">Команда с таким
+                                наименованием уже
+                                существует!</p>
+
+                            <p class="members-text modal-text text-start mt-4 mb-3" style="display:none;">Добавленные
+                                участники:</p>
+                            <div class="members d-flex flex-column"></div>
+
+                            <div class="search-user-form mt-3 mb-2">
+                                <p class="modal-text text-start">Добавьте участников команды:</p><br>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="text-field__noticon flex-grow-1">
+                                        <input data-action="create-team" class="searchInput" type="text"
+                                               name="user_name"
+                                               placeholder="ФИО" autocomplete="off">
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="38" height="40"
+                                         viewBox="0,0,256,256">
+                                        <g fill="orange" fill-rule="nonzero" stroke="none" stroke-width="1"
+                                           stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10"
+                                           stroke-dasharray="" stroke-dashoffset="0" font-family="none"
+                                           font-weight="none"
+                                           font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                                            <g transform="scale(2,2)">
+                                                <path d="M52.34961,14.40039c-9.725,0 -19.44961,3.69961 -26.84961,11.09961c-14.8,14.8 -14.8,38.89922 0,53.69922c7.4,7.4 17.10039,11.10156 26.90039,11.10156c9.8,0 19.50039,-3.70156 26.90039,-11.10156c14.7,-14.8 14.69844,-38.89922 -0.10156,-53.69922c-7.4,-7.4 -17.12461,-11.09961 -26.84961,-11.09961zM52.30078,20.30078c8.2,0 16.39961,3.09844 22.59961,9.39844c12.5,12.5 12.49961,32.80078 0.09961,45.30078c-12.5,12.5 -32.80078,12.5 -45.30078,0c-12.5,-12.5 -12.5,-32.80078 0,-45.30078c6.2,-6.2 14.40156,-9.39844 22.60156,-9.39844zM52.30078,26.30078c-6.9,0 -13.40078,2.69922 -18.30078,7.69922c-4.7,4.7 -7.29961,10.80039 -7.59961,17.40039c-0.1,1.7 1.20039,2.99961 2.90039,3.09961h0.09961c1.6,0 2.9,-1.30039 3,-2.90039c0.2,-5.1 2.29883,-9.80039 5.79883,-13.40039c3.8,-3.8 8.80156,-5.89844 14.10156,-5.89844c1.7,0 3,-1.3 3,-3c0,-1.7 -1.3,-3 -3,-3zM35,64c-1.65685,0 -3,1.34315 -3,3c0,1.65685 1.34315,3 3,3c1.65685,0 3,-1.34315 3,-3c0,-1.65685 -1.34315,-3 -3,-3zM83.36328,80.5c-0.7625,0 -1.5125,0.30039 -2.0625,0.90039c-1.2,1.2 -1.2,3.09922 0,4.19922l2.5,2.5c-0.6,1.2 -0.90039,2.50039 -0.90039,3.90039c0,2.4 0.89961,4.70039 2.59961,6.40039l12.80078,12.59961c1.8,1.8 4.09844,2.69922 6.39844,2.69922c2.3,0 4.60039,-0.89961 6.40039,-2.59961c3.5,-3.5 3.5,-9.19922 0,-12.69922l-12.79883,-12.80078c-1.7,-1.7 -4.00039,-2.59961 -6.40039,-2.59961c-1.4,0 -2.70039,0.30039 -3.90039,0.90039l-2.5,-2.5c-0.6,-0.6 -1.37422,-0.90039 -2.13672,-0.90039zM91.90039,88.90039c0.8,0 1.59961,0.30039 2.09961,0.90039l12.69922,12.69922c1.2,1.2 1.2,3.09922 0,4.19922c-1.2,1.2 -3.09922,1.2 -4.19922,0l-12.69922,-12.59961c-0.6,-0.6 -0.90039,-1.39922 -0.90039,-2.19922c0,-0.8 0.30039,-1.59961 0.90039,-2.09961c0.6,-0.6 1.29961,-0.90039 2.09961,-0.90039z"></path>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </div>
+                                <div class="searched-users mt-3 d-flex flex-column">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-center mt-4">
+                                <button id="create-team-btn" class="orange-btn" type="button">Создать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- КОНТЕНТ -->
+            <div class="nav nav-tabs border-0 d-flex justify-content-start" id="myTab" role="tablist">
+                <button type="button" id="filter-boss-tab" data-bs-toggle="tab" data-bs-target="#filter-boss" role="tab"
+                        class="tab-btn">Вы руководитель команды
+                </button>
+                <button type="button" class="tab-btn active" id="filter-participant-tab" data-bs-toggle="tab"
+                        data-bs-target="#filter-participant"
+                        role="tab">Вы участник команды
+                </button>
+            </div>
+            <div class="tab-content" id="myTabContent">
+                <div id="filter-boss" class="tab-pane fade" role="tabpanel"
+                     aria-labelledby="filter-date-tab">
+                    {% if managed_teams %}
+                        {% for team in managed_teams %}
+                            <div class="team">
+                                <div class="team-title d-flex justify-content-center gap-5">
+                                    <p class="text-center">{{ team.name }}</p>
+                                    <div class="d-flex gap-2">
+                                        <button data-team-id="{{ team.id }}" type="button"
+                                                style="width: 26px; height: 26px;" class="edit-team-btn">
+                                            <svg style="width: 100%; height: 100%;">
+                                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#edit-orange"></use>
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="delete-team-btn" style="width: 26px; height: 26px;"
+                                                data-team-id="{{ team.id }}"
+                                                data-team-name="{{ team.name }}">
+                                            <svg style="width: 100%; height: 100%;">
+                                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#delete-orange"></use>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="slider-container">
+                                    <div class="swiper">
+                                        <div class="swiper-wrapper">
+                                            <a href="{% url 'profile' team.leader.id %}" target="_blank"
+                                               class="swiper-slide team-card">
+                                                <div class="avatar-wrapper"></div>
+                                                <div class="crown-boss">
+                                                    <svg style="width: 26px; height: 26px;">
+                                                        <use xlink:href="{% static 'images/svg/sprite.svg' %}#crown-boss"></use>
+                                                    </svg>
+                                                </div>
+                                                <div class="img-wrapper">
+                                                    <img src="{{ team.leader.cropped_photo.url }}?timestamp={{ timestamp }}"
+                                                         alt="Фотография руководителя команды">
+                                                </div>
+                                                <p class="text-center">{{ team.leader.last_name }} {{ team.leader.first_name }}</p>
+                                            </a>
+                                            {% for member in team.members.all %}
+                                                <a href="{% url 'profile' member.id %}" target="_blank"
+                                                   class="swiper-slide team-card">
+                                                    <div class="avatar-wrapper"></div>
+                                                    <div class="img-wrapper">
+                                                        <img src="{{ member.cropped_photo.url }}?timestamp={{ timestamp }}"
+                                                             alt="Фотография участника команды">
+                                                    </div>
+                                                    <p class="text-center">{{ member.last_name }} {{ member.first_name }}</p>
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="swiper-pagination"></div>
+                                    </div>
+                                    <div class="swiper-navigation">
+                                        <button class="slider-button slider-button-prev">
+                                            <svg style="width: 28px; height: 76px;">
+                                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#left-arrow"></use>
+                                            </svg>
+                                        </button>
+                                        <button class="slider-button slider-button-next">
+                                            <svg style="width: 28px; height: 78px;">
+                                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#right-arrow"></use>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center mt-5 mb-5 fs-4">К сожалению, вы не руководите ни одной командой</p>
+                    {% endif %}
+                </div>
+                <div id="filter-participant" class="tab-pane fade show active" role="tabpanel"
+                     aria-labelledby="filter-participant-tab">
+                    {% if others_teams %}
+                        {% for team in others_teams %}
+                            <div class="team">
+                                <div class="team-title d-flex justify-content-center gap-5">
+                                    <p class="text-center">{{ team.name }}</p>
+                                </div>
+                                <div class="slider-container">
+                                    <div class="swiper">
+                                        <div class="swiper-wrapper">
+                                            <a href="{% url 'profile' team.leader.id %}" target="_blank"
+                                               class="swiper-slide team-card">
+                                                <div class="avatar-wrapper"></div>
+                                                <div class="crown-boss">
+                                                    <svg style="width: 26px; height: 26px;">
+                                                        <use xlink:href="{% static 'images/svg/sprite.svg' %}#crown-boss"></use>
+                                                    </svg>
+                                                </div>
+                                                <div class="img-wrapper">
+                                                    <img src="{{ team.leader.cropped_photo.url }}?timestamp={{ timestamp }}"
+                                                         alt="Фотография руководителя команды">
+                                                </div>
+                                                <p class="text-center">{{ team.leader.last_name }} {{ team.leader.first_name }}</p>
+                                            </a>
+                                            {% for member in team.members.all %}
+                                                <a href="{% url 'profile' member.id %}" target="_blank"
+                                                   class="swiper-slide team-card">
+                                                    <div class="avatar-wrapper"></div>
+                                                    <div class="img-wrapper">
+                                                        <img src="{{ member.cropped_photo.url }}?timestamp={{ timestamp }}"
+                                                             alt="Фотография участника команды">
+                                                    </div>
+                                                    <p class="text-center">{{ member.last_name }} {{ member.first_name }}</p>
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="swiper-pagination"></div>
+                                    </div>
+                                    <div class="swiper-navigation">
+                                        <button class="slider-button slider-button-prev">
+                                            <svg style="width: 28px; height: 76px;">
+                                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#left-arrow"></use>
+                                            </svg>
+                                        </button>
+                                        <button class="slider-button slider-button-next">
+                                            <svg style="width: 28px; height: 78px;">
+                                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#right-arrow"></use>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center mt-5 mb-5 fs-4">К сожалению, вы не состоите ни в одной команде(</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!--  МОДАЛЬНОЕ ОКНО УДАЛЕНИЯ КОМАНДЫ -->
+        <div class="modal fade modal-custom" id="delete-team" tabindex="-1" aria-labelledby="delete" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header position-relative">
+                        <button type="button" class="close-modal-btn" data-bs-dismiss="modal" aria-label="Закрыть">
+                            <svg style="width: 28px; height: 28px;">
+                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#close"></use>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="modal-title text-center">Предупреждение</p>
+                    <div class="modal-devider"></div>
+                    <form method="POST" class="mt-2" id="delete-team-form">
+                        {% csrf_token %}
+                        <p class="text-start fs-5 my-3">Вы действительно хотите удалить команду «<span></span>»?</p>
+                        <input class="form-control" type="hidden" name="team_id">
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit"
+                                    class="d-flex gap-2 justify-content-center align-items-center orange-btn modal-btn">
+                                <svg style="width: 19px; height: 17px;">
+                                    <use xlink:href="{% static 'images/svg/sprite.svg' %}#delete"></use>
+                                </svg>
+                                <p>Да, удалить</p>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!--  МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ КОМАНДЫ -->
+        <div class="modal fade modal-custom" id="edit-team" tabindex="-1" aria-labelledby="edit-team"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content modal-content-teams">
+                    <div class="modal-header position-relative">
+                        <button type="button" class="close-modal-btn close-modal-btn-teams" data-bs-dismiss="modal"
+                                aria-label="Закрыть">
+                            <svg style="width: 28px; height: 28px;">
+                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#close"></use>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="modal-title text-center">Редактирование команды</p>
+                    <div class="modal-devider"></div>
+                    <div id="edit-team-form">
+                        <input type="hidden" name="team_id">
+                        <p class="modal-text text-start">Наименование команды:</p>
+                        <div class="text-field__noticon mb-2 mt-3 position-relative">
+                            <input data-action="edit-team" type="text" name="team_name" maxlength="50"
+                                   placeholder="Наименование" autocomplete="off" required>
+                            <span>*</span>
+                        </div>
+                        <p class="not-unique-warning mb-2" style="display: none; color: red">Команда с таким
+                            наименованием уже
+                            существует!</p>
+
+                        <p class="members-text modal-text text-start mt-4 mb-3" style="display:none;">Добавленные
+                            участники:</p>
+                        <div class="members d-flex flex-column"></div>
+
+                        <div class="search-user-form mt-3 mb-2">
+                            <p class="modal-text text-start">Добавьте участников команды:</p><br>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-field__noticon flex-grow-1">
+                                    <input data-action="edit-team" class="searchInput" type="text" name="user_name"
+                                           placeholder="ФИО" autocomplete="off">
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="38" height="40"
+                                     viewBox="0,0,256,256">
+                                    <g fill="orange" fill-rule="nonzero" stroke="none" stroke-width="1"
+                                       stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10"
+                                       stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                                       font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                                        <g transform="scale(2,2)">
+                                            <path d="M52.34961,14.40039c-9.725,0 -19.44961,3.69961 -26.84961,11.09961c-14.8,14.8 -14.8,38.89922 0,53.69922c7.4,7.4 17.10039,11.10156 26.90039,11.10156c9.8,0 19.50039,-3.70156 26.90039,-11.10156c14.7,-14.8 14.69844,-38.89922 -0.10156,-53.69922c-7.4,-7.4 -17.12461,-11.09961 -26.84961,-11.09961zM52.30078,20.30078c8.2,0 16.39961,3.09844 22.59961,9.39844c12.5,12.5 12.49961,32.80078 0.09961,45.30078c-12.5,12.5 -32.80078,12.5 -45.30078,0c-12.5,-12.5 -12.5,-32.80078 0,-45.30078c6.2,-6.2 14.40156,-9.39844 22.60156,-9.39844zM52.30078,26.30078c-6.9,0 -13.40078,2.69922 -18.30078,7.69922c-4.7,4.7 -7.29961,10.80039 -7.59961,17.40039c-0.1,1.7 1.20039,2.99961 2.90039,3.09961h0.09961c1.6,0 2.9,-1.30039 3,-2.90039c0.2,-5.1 2.29883,-9.80039 5.79883,-13.40039c3.8,-3.8 8.80156,-5.89844 14.10156,-5.89844c1.7,0 3,-1.3 3,-3c0,-1.7 -1.3,-3 -3,-3zM35,64c-1.65685,0 -3,1.34315 -3,3c0,1.65685 1.34315,3 3,3c1.65685,0 3,-1.34315 3,-3c0,-1.65685 -1.34315,-3 -3,-3zM83.36328,80.5c-0.7625,0 -1.5125,0.30039 -2.0625,0.90039c-1.2,1.2 -1.2,3.09922 0,4.19922l2.5,2.5c-0.6,1.2 -0.90039,2.50039 -0.90039,3.90039c0,2.4 0.89961,4.70039 2.59961,6.40039l12.80078,12.59961c1.8,1.8 4.09844,2.69922 6.39844,2.69922c2.3,0 4.60039,-0.89961 6.40039,-2.59961c3.5,-3.5 3.5,-9.19922 0,-12.69922l-12.79883,-12.80078c-1.7,-1.7 -4.00039,-2.59961 -6.40039,-2.59961c-1.4,0 -2.70039,0.30039 -3.90039,0.90039l-2.5,-2.5c-0.6,-0.6 -1.37422,-0.90039 -2.13672,-0.90039zM91.90039,88.90039c0.8,0 1.59961,0.30039 2.09961,0.90039l12.69922,12.69922c1.2,1.2 1.2,3.09922 0,4.19922c-1.2,1.2 -3.09922,1.2 -4.19922,0l-12.69922,-12.59961c-0.6,-0.6 -0.90039,-1.39922 -0.90039,-2.19922c0,-0.8 0.30039,-1.59961 0.90039,-2.09961c0.6,-0.6 1.29961,-0.90039 2.09961,-0.90039z"></path>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="searched-users mt-3 d-flex flex-column">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-4">
+                            <button id="edit-team-btn" class="orange-btn" type="button">Сохранить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    {% load static %}
+    <script src="{% static 'js/teams.js' %}" defer></script>
+    <script src="{% static 'js/navbarSearchUsers.js' %}" defer></script>
+
+{% endblock content %}
+

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="index, follo@w">
+    <meta name="google" content="notranslate">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="description" content="Личный кабинет">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}<title>YUTA</title>{% endblock title %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css"
+          integrity="sha512-hvNR0F/e2J7zPPfLC9auFe3/SE0yG4aJCOd/qxew74NN7eyiSKjr7xJJMu1Jy2wf7FXITpWS1E/RY8yzuXN7VA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css"/>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"
+            integrity="sha512-Eak/29OTpb36LLo2r47IpVzPBLXnAMPAVypbSZiZ4Qkf8p/7S/XRG5xp7OKWPPYfJT6metI+IORkR5G8F900+g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        let wow = new WOW({
+            boxClass: 'wow',
+            animateClass: 'animate__animated',
+            mobile: false,
+            live: true
+        });
+        wow.init();
+    </script>
+</head>
+<body>
+
+<div class="wrapper">
+    {% block menu %}
+        <nav class="navbar navbar-expand-md navigation">
+            <div class="container-xxl">
+                <div class="logo">
+                    {% block logo %}
+                        <img src="{% static 'images/logo.png' %}" alt="YUTA">
+                    {% endblock logo %}
+                </div>
+                <div class="nav-search">
+                    <input type="text" name="navbar_user_name" placeholder="ФИО" autocomplete="off" maxlength="75">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="38" height="40"
+                         viewBox="0,0,256,256">
+                        <g fill="white" fill-rule="nonzero" stroke="none" stroke-width="1"
+                           stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10"
+                           stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                           font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                            <g transform="scale(2,2)">
+                                <path d="M52.34961,14.40039c-9.725,0 -19.44961,3.69961 -26.84961,11.09961c-14.8,14.8 -14.8,38.89922 0,53.69922c7.4,7.4 17.10039,11.10156 26.90039,11.10156c9.8,0 19.50039,-3.70156 26.90039,-11.10156c14.7,-14.8 14.69844,-38.89922 -0.10156,-53.69922c-7.4,-7.4 -17.12461,-11.09961 -26.84961,-11.09961zM52.30078,20.30078c8.2,0 16.39961,3.09844 22.59961,9.39844c12.5,12.5 12.49961,32.80078 0.09961,45.30078c-12.5,12.5 -32.80078,12.5 -45.30078,0c-12.5,-12.5 -12.5,-32.80078 0,-45.30078c6.2,-6.2 14.40156,-9.39844 22.60156,-9.39844zM52.30078,26.30078c-6.9,0 -13.40078,2.69922 -18.30078,7.69922c-4.7,4.7 -7.29961,10.80039 -7.59961,17.40039c-0.1,1.7 1.20039,2.99961 2.90039,3.09961h0.09961c1.6,0 2.9,-1.30039 3,-2.90039c0.2,-5.1 2.29883,-9.80039 5.79883,-13.40039c3.8,-3.8 8.80156,-5.89844 14.10156,-5.89844c1.7,0 3,-1.3 3,-3c0,-1.7 -1.3,-3 -3,-3zM35,64c-1.65685,0 -3,1.34315 -3,3c0,1.65685 1.34315,3 3,3c1.65685,0 3,-1.34315 3,-3c0,-1.65685 -1.34315,-3 -3,-3zM83.36328,80.5c-0.7625,0 -1.5125,0.30039 -2.0625,0.90039c-1.2,1.2 -1.2,3.09922 0,4.19922l2.5,2.5c-0.6,1.2 -0.90039,2.50039 -0.90039,3.90039c0,2.4 0.89961,4.70039 2.59961,6.40039l12.80078,12.59961c1.8,1.8 4.09844,2.69922 6.39844,2.69922c2.3,0 4.60039,-0.89961 6.40039,-2.59961c3.5,-3.5 3.5,-9.19922 0,-12.69922l-12.79883,-12.80078c-1.7,-1.7 -4.00039,-2.59961 -6.40039,-2.59961c-1.4,0 -2.70039,0.30039 -3.90039,0.90039l-2.5,-2.5c-0.6,-0.6 -1.37422,-0.90039 -2.13672,-0.90039zM91.90039,88.90039c0.8,0 1.59961,0.30039 2.09961,0.90039l12.69922,12.69922c1.2,1.2 1.2,3.09922 0,4.19922c-1.2,1.2 -3.09922,1.2 -4.19922,0l-12.69922,-12.59961c-0.6,-0.6 -0.90039,-1.39922 -0.90039,-2.19922c0,-0.8 0.30039,-1.59961 0.90039,-2.09961c0.6,-0.6 1.29961,-0.90039 2.09961,-0.90039z"></path>
+                            </g>
+                        </g>
+                    </svg>
+                    <div class="search-result">
+                        <ul class="search-result-list"></ul>
+                    </div>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Переключатель навигации">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-lg-5 ms-md-3 ms-sm-0 ms-0 d-flex align-items-center">
+                        <li class="nav-item my-2 mt-md-2 mt-sm-0 mt-2 ms-lg-0 ms-md-0 ms-sm-0 ms-0">
+                            <a class="menu-link" href="{% url 'profile' menu_user_id %}">Профиль</a>
+                        </li>
+                        <li class="nav-item my-2 ms-lg-5 ms-md-4 ms-sm-0 ms-0 d-flex align-items-center">
+                            <a class="menu-link" href="{% url 'projects' %}">Проекты</a>
+                        </li>
+                        <li class="nav-item my-2 ms-lg-5 ms-md-4 ms-sm-0 ms-0 d-flex align-items-center">
+                            <a class="menu-link" href="{% url 'tasks' %}">Задачи</a>
+                        </li>
+                        <li class="nav-item my-2 ms-lg-5 ms-md-4 ms-sm-0 ms-0 d-flex align-items-center">
+                            <a class="menu-link" href="{% url 'teams' %}">Команды</a>
+                        </li>
+                        <li class="nav-item my-2 mb-md-2 mb-sm-4 mb-2 ms-lg-5 ms-md-4 ms-sm-0 ms-0 d-flex align-items-center">
+                            <button type="button" class="white-btn" data-bs-toggle="modal"
+                                    data-bs-target="#exit">Выйти
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal fade modal-exit" id="exit" tabindex="-1" aria-labelledby="exit" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header position-relative">
+                                <button type="button" class="close-modal-btn" data-bs-dismiss="modal"
+                                        aria-label="Закрыть">
+                                    <svg style="width: 28px; height: 28px;">
+                                        <use xlink:href="{% static 'images/svg/sprite.svg' %}#close"></use>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="modal-title text-center">Предупреждение</p>
+                            <div class="modal-devider"></div>
+                            <div class="mt-2">
+                                <p class="text-start fs-5">Вы действительно хотите выйти из приложения?</p>
+                                <div class="d-flex justify-content-end mt-4">
+                                    <a href="{% url 'main' %}">
+                                        <button class="orange-btn modal-btn">Да, выйти</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    {% endblock menu %}
+
+    <main>
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <footer class="position-relative py-3">
+        <div class="container-xxl">
+            <div class="d-flex justify-content-between align-items-lg-center align-items-md-center align-items-sm-center align-items-center flex-lg-row flex-md-column flex-sm-column flex-column mb-4 mt-2">
+                <div class="company d-flex justify-content-start align-items-center">
+                    <div class="company-text">
+                        <p class="company-text__title">YSTU's Unified Tasks App</p>
+                        <p class="company-text__subtitle">Единое приложение ЯГТУ для задач</p>
+                    </div>
+                </div>
+                <div class="footer-devider d-lg-block d-md-none d-sm-none d-none"></div>
+                <div class="politics mt-lg-0 mt-md-4 mt-sm-4 mt-3">
+                    <div class="politics-document">
+                        <p><a href="#">Политика в отношении обработки персональных данных</a></p>
+                        <p><a href="#">Согласие на обработку персональных данных</a></p>
+                    </div>
+                    <div class="politics-support d-flex">
+                        <svg style="width: 50px; height: 40px;">
+                            <use xlink:href="{% static 'images/svg/sprite.svg' %}#support"></use>
+                        </svg>
+                        <div class="support-text">
+                            <p class="title">Тех. поддержка</p>
+                            <p>support@yandex.ru</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center opacity-75">Все права защищены © 2023 - <span id="current-year"></span></p>
+        </div>
+    </footer>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/imask"></script>
+<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script src="{% static 'js/base.js' %}"></script>
+
+</body>
+</html>
